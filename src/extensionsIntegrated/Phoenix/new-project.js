@@ -104,12 +104,21 @@ define(function (require, exports, module) {
     }
 
     function showErrorDialogue(title, message) {
-        Dialogs.showModalDialog(
+        return Dialogs.showModalDialog(
             DefaultDialogs.DIALOG_ID_ERROR,
             title,
             message
         );
     }
+
+    async function showConfirmDialogue(title, message, callback) {
+        await Dialogs.showConfirmDialog(
+            title,
+            message
+        ).done(function (selection) {
+            callback(selection)
+        });        
+    }    
 
     function openFolder () {
         CommandManager.execute(Commands.FILE_OPEN_FOLDER).then(closeDialogue);
@@ -494,6 +503,8 @@ define(function (require, exports, module) {
     exports.downloadAndOpenProject = downloadAndOpenProject;
     exports.showFolderSelect = showFolderSelect;
     exports.showErrorDialogue = showErrorDialogue;
+    exports.showConfirmDialogue = showConfirmDialogue;
+    exports.DIALOG_BTN_OK = Dialogs.DIALOG_BTN_OK;
     exports.getGitCloneDir = getGitCloneDir;
     exports.gitClone = gitClone;
     exports.setupExploreProject = defaultProjects.setupExploreProject;

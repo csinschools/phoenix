@@ -313,6 +313,61 @@ define(function (require, exports, module) {
     // as soon as the first theme loads up, phoenix is safe to view
     ProjectManager.on(ProjectManager.EVENT_PROJECT_OPEN, _removePhoenixLoadingOverlay);
 
+    function _initBrackets(extensionLoaderPromise) {
+        _initTest();
+
+        // If this is the first launch, and we have an index.html file in the project folder (which should be
+        // the samples folder on first launch), open it automatically. (We explicitly check for the
+        // samples folder in case this is the first time we're launching Brackets after upgrading from
+        // an old version that might not have set the "afterFirstLaunch" pref.)
+        const deferred = new $.Deferred();
+
+        if (!params.get("skipSampleProjectLoad") && !PreferencesManager.getViewState("afterFirstLaunch")) {
+            PreferencesManager.setViewState("afterFirstLaunch", "true");
+            if (ProjectManager.isWelcomeProjectPath(initialProjectPath)) {
+                FileSystem.resolve(initialProjectPath + "index.html", function (err, file) {
+                    if (!err) {
+                        const promise = CommandManager.execute(Commands.CMD_ADD_TO_WORKINGSET_AND_OPEN, { fullPath: file.fullPath });
+                        promise.then(deferred.resolve, deferred.reject);
+                    } else {
+                        deferred.reject();
+                    }
+                });
+            } else {
+                deferred.resolve();
+            }
+        } else {
+            deferred.resolve();
+        }
+
+        deferred.always(function () {
+            extensionLoaderPromise.always(function () {
+                // Signal that extensions are loaded
+                AppInit._dispatchReady(AppInit.EXTENSIONS_LOADED);
+                // Signal that Brackets is loaded
+                AppInit._dispatchReady(AppInit.APP_READY);
+
+                PerfUtils.addMeasurement("Application Startup");
+
+                if (PreferencesManager._isUserScopeCorrupt()) {
+                    const userPrefFullPath = PreferencesManager.getUserPrefFile();
+                    // user scope can get corrupt only if the file exists, is readable,
+                    // but malformed. no need to check for its existence.
+                    Metrics.countEvent(Metrics.EVENT_TYPE.STORAGE, "prefs.corrupt", "startup");
+                    let file = FileSystem.getFileForPath(userPrefFullPath);
+                    file.unlinkAsync().finally(function () {
+                        Dialogs.showModalDialog(
+                            DefaultDialogs.DIALOG_ID_ERROR,
+                            Strings.ERROR_PREFS_RESET_TITLE,
+                            Strings.ERROR_PREFS_CORRUPT_RESET
+                        );
+                    });
+                }
+            });
+        });
+
+    }
+
     function _startupBrackets() {
         // Load all extensions. This promise will complete even if one or more
         // extensions fail to load.
@@ -322,61 +377,17 @@ define(function (require, exports, module) {
 
         // Finish UI initialization
         ViewCommandHandlers.restoreFontSize();
-        ProjectManager.getStartupProjectPath().then((initialProjectPath)=>{
-            ProjectManager.openProject(initialProjectPath).always(function () {
-                _initTest();
-
-                // If this is the first launch, and we have an index.html file in the project folder (which should be
-                // the samples folder on first launch), open it automatically. (We explicitly check for the
-                // samples folder in case this is the first time we're launching Brackets after upgrading from
-                // an old version that might not have set the "afterFirstLaunch" pref.)
-                const deferred = new $.Deferred();
-
-                if (!params.get("skipSampleProjectLoad") && !PreferencesManager.getViewState("afterFirstLaunch")) {
-                    PreferencesManager.setViewState("afterFirstLaunch", "true");
-                    if (ProjectManager.isWelcomeProjectPath(initialProjectPath)) {
-                        FileSystem.resolve(initialProjectPath + "index.html", function (err, file) {
-                            if (!err) {
-                                const promise = CommandManager.execute(Commands.CMD_ADD_TO_WORKINGSET_AND_OPEN, { fullPath: file.fullPath });
-                                promise.then(deferred.resolve, deferred.reject);
-                            } else {
-                                deferred.reject();
-                            }
-                        });
-                    } else {
-                        deferred.resolve();
-                    }
-                } else {
-                    deferred.resolve();
-                }
-
-                deferred.always(function () {
-                    extensionLoaderPromise.always(function () {
-                        // Signal that extensions are loaded
-                        AppInit._dispatchReady(AppInit.EXTENSIONS_LOADED);
-                        // Signal that Brackets is loaded
-                        AppInit._dispatchReady(AppInit.APP_READY);
-
-                        PerfUtils.addMeasurement("Application Startup");
-
-                        if (PreferencesManager._isUserScopeCorrupt()) {
-                            const userPrefFullPath = PreferencesManager.getUserPrefFile();
-                            // user scope can get corrupt only if the file exists, is readable,
-                            // but malformed. no need to check for its existence.
-                            Metrics.countEvent(Metrics.EVENT_TYPE.STORAGE, "prefs.corrupt", "startup");
-                            let file = FileSystem.getFileForPath(userPrefFullPath);
-                            file.unlinkAsync().finally(function () {
-                                Dialogs.showModalDialog(
-                                    DefaultDialogs.DIALOG_ID_ERROR,
-                                    Strings.ERROR_PREFS_RESET_TITLE,
-                                    Strings.ERROR_PREFS_CORRUPT_RESET
-                                );
-                            });
-                        }
-                    });
+        if (params.get("id")) {
+            ProjectManager.downloadAndOpenProject(`https://codestore-348206.ts.r.appspot.com/zip/get/?id=${params.get("id")}`).then(function() {
+                _initBrackets(extensionLoaderPromise);
+            });
+        } else {
+            ProjectManager.getStartupProjectPath().then((initialProjectPath)=>{
+                ProjectManager.openProject(initialProjectPath).always(function () {
+                    _initBrackets(extensionLoaderPromise);
                 });
             });
-        });
+        }
     }
 
     /**

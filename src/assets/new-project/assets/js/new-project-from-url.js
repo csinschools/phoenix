@@ -84,8 +84,8 @@ async function _validateSuggestedName() {
 async function _validateAll() {
     const locIsValid = await _validateProjectLocation();
     const nameIsValid = await _validateSuggestedName();
-    document.getElementById('createProjectBtn').disabled = !(locIsValid && nameIsValid);
-    document.getElementById('createProjectWithNameBtn').disabled = !(locIsValid && nameIsValid);
+    //document.getElementById('createProjectBtn').disabled = !(locIsValid && nameIsValid);
+    //document.getElementById('createProjectWithNameBtn').disabled = !(locIsValid && nameIsValid);
     return locIsValid && nameIsValid;
 }
 
@@ -102,13 +102,22 @@ function _selectFolder() {
 }
 
 async function _createProjectClicked() {
-    const projectPath = _computeProjectPath();
+    var projectPath = _computeProjectPath();
     if(!projectPath){
-        newProjectExtension.showErrorDialogue(
-            Strings.MISSING_FIELDS,
-            Strings.PLEASE_FILL_ALL_REQUIRED);
-        return;
+        await newProjectExtension.showConfirmDialogue("Create Project in Browser",
+            "You haven't specified a location on your drive, so the project will be created in the browser.\nThis may not work for large projects. Do you want to continue?", 
+            id=>{
+                if (id === newProjectExtension.DIALOG_BTN_OK) {
+                    projectPath = "/fs/app/project";
+                    downloadAndOpenProject(projectPath)                    
+                }
+            });
+    } else {
+        downloadAndOpenProject(projectPath)
     }
+}
+
+async function downloadAndOpenProject(projectPath) {
     await window.parent.Phoenix.VFS.ensureExistsDirAsync(projectPath);
     newProjectExtension.downloadAndOpenProject(
         PARAM_SUGGESTED_URL,
@@ -117,7 +126,7 @@ async function _createProjectClicked() {
             Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "createProject.Click", "create.success");
             newProjectExtension.closeDialogue();
         });
-    Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "createProject.Click", "create");
+    Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "createProject.Click", "create");    
 }
 
 function _showLicensingInfo() {

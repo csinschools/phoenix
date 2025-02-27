@@ -32,7 +32,13 @@ define(function (require, exports, module) {
         Strings      = require("strings"),
         Dialogs      = require("widgets/Dialogs"),
         NotificationUI  = require("widgets/NotificationUI"),
+        UrlParams    = require("utils/UrlParams").UrlParams,
         DefaultDialogs = require("widgets/DefaultDialogs");
+
+    // Local variables
+    const params = new UrlParams();
+    // read URL params
+    params.parse();        
 
     const PERSIST_STORAGE_DIALOG_DELAY_SECS = 60000;
     let $icon;
@@ -108,11 +114,17 @@ define(function (require, exports, module) {
         if(Phoenix.isSpecRunnerWindow){
             return;
         }
+
         _addToolbarIcon();
         serverSync.init();
         defaultProjects.init();
-        newProject.init();
-        newFeature.init();
+
+        if (!params.get("id")) {
+            newProject.init();            
+            newFeature.init();
+        }
+
+
         _detectUnSupportedBrowser();
         _persistBrowserStorage();
     });

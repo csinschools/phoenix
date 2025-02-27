@@ -319,6 +319,11 @@ define(function (require, exports, module) {
         appshell.fs.mountNativeFolder(wrappedCallback);
     }
 
+    function mountNativeFileSystemHandle(fileSystemHandle, callback) {
+        const wrappedCallback = _wrap(callback);
+        appshell.fs.mountNativeFolder(fileSystemHandle, wrappedCallback);
+    }
+
     /**
      * Display a save-file dialog and call back asynchronously with either a
      * FileSystemError string or the path to which the user has chosen to save
@@ -707,6 +712,7 @@ define(function (require, exports, module) {
     exports.watchPath       = watchPath;
     exports.unwatchPath     = unwatchPath;
     exports.unwatchAll      = unwatchAll;
+    exports.mountNativeFileSystemHandle = mountNativeFileSystemHandle;
     exports.pathLib         = window.Phoenix.VFS.path;
 
     /**

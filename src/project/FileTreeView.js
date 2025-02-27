@@ -241,10 +241,23 @@ define(function (require, exports, module) {
             this.setDragImage(e);
             e.stopPropagation();
         },
-        handleDrop: function(e) {
-            var data = JSON.parse(e.dataTransfer.getData("text"));
+        handleDrop: async function(e) {
+            var data = e.dataTransfer.getData("text");
 
-            this.props.actions.moveItem(data.path, this.myPath());
+            if (data.length === 0) {
+                // came from outside of the filetreeview (from the desktop)
+                let item = event.dataTransfer.items[0];
+                if (item.kind === "file") {                    
+                    const fileHandle = await item.getAsFileSystemHandle();
+                    const file = await fileHandle.getFile();
+                    let path = this.myPath() + file.name;
+                    fs.writeFile(path, await file.arrayBuffer(), null, ()=>{});
+                }
+            } else {
+                data = JSON.parse(data);
+                this.props.actions.moveItem(data.path, this.myPath());
+            }
+
             this.setDraggedOver(false);
 
             this.clearDragTimeout();
@@ -1192,9 +1205,22 @@ define(function (require, exports, module) {
                 this.props.selectionViewInfo !== nextProps.selectionViewInfo;
         },
 
-        handleDrop: function(e) {
-            var data = JSON.parse(e.dataTransfer.getData("text"));
-            this.props.actions.moveItem(data.path, this.props.parentPath);
+        handleDrop: async function(e) {
+            var data = e.dataTransfer.getData("text");
+            
+            if (data.length === 0) {
+                // came from outside of the filetreeview (from the desktop)
+                let item = event.dataTransfer.items[0];
+                if (item.kind === "file") {                    
+                    const fileHandle = await item.getAsFileSystemHandle();
+                    const file = await fileHandle.getFile();
+                    let path = this.props.parentPath + file.name;
+                    fs.writeFile(path, await file.arrayBuffer(), null, ()=>{});
+                }
+            } else {
+                data = JSON.parse(data);
+                this.props.actions.moveItem(data.path, this.props.parentPath);
+            }            
             e.stopPropagation();
         },
 

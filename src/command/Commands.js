@@ -49,6 +49,9 @@ define(function (require, exports, module) {
     /** Downloads the entire project */
     exports.FILE_DOWNLOAD_PROJECT       = "file.downloadProject";              // ProjectManager.js
 
+    /** Downloads the entire project */
+    exports.FILE_UPLOAD_PROJECT         = "file.uploadProject";              // ProjectManager.js    
+
     /** Cuts the selected file or folder to clipboard */
     exports.FILE_CUT                    = "file.cut";                   // ProjectManager.js
 

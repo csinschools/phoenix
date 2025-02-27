@@ -244,7 +244,8 @@ function initCodeEditor() {
 
     document.getElementById("newHTMLBtn").onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "html5");
-        newProjectFromURLScreen(getPhoenixAbsURL("assets/sample-projects/HTML5.zip"),
+        //newProjectFromURLScreen(getPhoenixAbsURL("assets/sample-projects/HTML5.zip"),
+        newProjectFromURLScreen(("http://localhost:3000/zip/get/?id=9xW8E3mqD"),
             "html project", Strings.NEW_HTML, {
             previewURL: `${getPhoenixAbsURL("assets/sample-projects/HTML5/index.html")}`});
     };

@@ -459,6 +459,7 @@ define({
     "CMD_FILE_DUPLICATE": "Duplicate",
     "CMD_FILE_DUPLICATE_FILE": "Duplicate File",
     "CMD_FILE_DOWNLOAD_PROJECT": "Download Project",
+    "CMD_FILE_UPLOAD_PROJECT": "Snapshot Project to URL",
     "CMD_FILE_DOWNLOAD": "Download",
     "CMD_FILE_CUT": "Cut",
     "CMD_FILE_COPY": "Copy",

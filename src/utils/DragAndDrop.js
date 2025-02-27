@@ -319,7 +319,7 @@ define(function (require, exports, module) {
             }
         }
 
-        function handleDrop(event) {
+        async function handleDrop(event) {
             event = event.originalEvent || event;
 
             const files = event.dataTransfer.files;
@@ -331,11 +331,64 @@ define(function (require, exports, module) {
                 event.stopPropagation();
                 event.preventDefault();
 
+                // get the filesystemhandle from the dropped file (event.datatransfer.items[0].getFileSystemHandle())
+                // copy by 'writing' the data from the source filesystemhandle to a new file with the same name in the global project path (for now - later identify the path where the file was dropped)
+
+
+
+
+                // perform the copy across the two handles
+                /*
+                async function handleFileDrop(event, targetDirHandle) {
+                    event.preventDefault(); // Prevent default browser behavior
+
+                    if (!event.dataTransfer.items) return;
+
+                    for (const item of event.dataTransfer.items) {
+                        if (item.kind === "file") {
+                            // Get the FileSystemFileHandle
+                            const fileHandle = await item.getAsFileSystemHandle();
+
+                            if (fileHandle.kind === "file") {
+                                console.log(`Dropped file: ${fileHandle.name}`);
+
+                                // Copy file to the target directory
+                                await copyFileToDirectory(fileHandle, targetDirHandle);
+                            }
+                        }
+                    }
+                }
+
+                async function copyFileToDirectory(fileHandle, dirHandle) {
+                    // Get the file object
+                    const file = await fileHandle.getFile();
+
+                    // Create a new file in the target directory
+                    const newFileHandle = await dirHandle.getFileHandle(file.name, { create: true });
+
+                    // Open a writable stream for the new file
+                    const writable = await newFileHandle.createWritable();
+
+                    // Write the file contents
+                    await writable.write(await file.arrayBuffer());
+
+                    // Close the writable stream
+                    await writable.close();
+
+                    console.log(`Copied ${file.name} to the target directory`);
+                }                
+                */
+
+                //var paths = ["/mnt/c:/Users/toank/downloads/python.png"];
+                //openDroppedFiles(paths);
+
+                /*
                 brackets.app.getDroppedFiles(function (err, paths) {
                     if (!err) {
                         openDroppedFiles(paths);
                     }
                 });
+                */
             }
         }
 

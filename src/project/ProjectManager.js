@@ -1439,6 +1439,36 @@ define(function (require, exports, module) {
             });
     }
 
+    async function downloadAndOpenProject(downloadURL) {
+        projectPath = "/fs/app/project";
+        return new Promise(async (resolve, reject)=>{ // eslint-disable-line
+            try {
+                window.JSZipUtils.getBinaryContent(downloadURL, {
+                    callback: async function(err, data) {
+                        if(err) {
+                            console.error("could not load phoenix default project from zip file!", err);
+                            reject();
+                        } else {
+                            ZipUtils.unzipBinDataToLocation(data, projectPath)
+                            .then(()=>{
+                                openProject(projectPath)
+                                    .then(resolve)
+                                    .fail(reject);
+                                console.log("Project Setup complete: ", projectPath);
+                            })
+                            .catch((err)=>{
+                                console.error(err);
+                                reject(err);
+                            });
+                        }
+                    }
+                });
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }    
+
     /**
      * Open a new project. Currently, Brackets must always have a project open, so
      * this method handles both closing the current project and opening a new project.
@@ -1795,6 +1825,39 @@ define(function (require, exports, module) {
             _getProjectDisplayNameOrPath(fullPath));
     }
 
+    function _uploadFolderCommand(downloadPath) {
+        downloadPath = downloadPath || getProjectRoot().fullPath;
+        let projectName = path.basename(downloadPath);
+        let message = StringUtils.format(Strings.DOWNLOADING_FILE, projectName);
+        setProjectBusy(true, message);
+        ZipUtils.zipFolder(downloadPath).then(zip=>{
+            return zip.generateAsync({type:"blob"});
+        }).then(async function (blob) {
+            //
+            // Create FormData and append ZIP file
+            const formData = new FormData();
+            formData.append("zipfile", blob, "generated.zip");
+
+            // Upload ZIP to the server
+            try {
+                const response = await fetch("https://codestore-348206.ts.r.appspot.com/zip/put", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                console.log("Upload Success:", result);
+                alert(`File uploaded! Download URL: ${result.fileUrl}`);
+            } catch (error) {
+                console.error("Upload Error:", error);
+            }            
+        }).catch(()=>{
+            _zipFailed(downloadPath);
+        }).finally(()=>{
+            setProjectBusy(false, message);
+        });        
+    }
+
     function _downloadFolderCommand(downloadPath) {
         downloadPath = downloadPath || getProjectRoot().fullPath;
         let projectName = path.basename(downloadPath);
@@ -1802,7 +1865,7 @@ define(function (require, exports, module) {
         setProjectBusy(true, message);
         ZipUtils.zipFolder(downloadPath).then(zip=>{
             return zip.generateAsync({type:"blob"});
-        }).then(function (blob) {
+        }).then(async function (blob) {
             window.saveAs(blob, `${projectName}.zip`);
         }).catch(()=>{
             _zipFailed(downloadPath);
@@ -2107,8 +2170,8 @@ define(function (require, exports, module) {
     PreferencesManager.stateManager.definePreference("projectPath", "string", getWelcomeProjectPath());
 
     function _setProjectDownloadCommandEnabled(_event, projectRoot) {
-        CommandManager.get(Commands.FILE_DOWNLOAD_PROJECT)
-            .setEnabled(!Phoenix.VFS.isLocalDiscPath(projectRoot.fullPath));
+        //CommandManager.get(Commands.FILE_DOWNLOAD_PROJECT)
+        //    .setEnabled(!Phoenix.VFS.isLocalDiscPath(projectRoot.fullPath));
         CommandManager.get(Commands.FILE_DOWNLOAD)
             .setEnabled(!Phoenix.VFS.isLocalDiscPath(projectRoot.fullPath));
     }
@@ -2212,6 +2275,7 @@ define(function (require, exports, module) {
     CommandManager.register(Strings.CMD_FILE_DUPLICATE_FILE, Commands.FILE_DUPLICATE_FILE, _duplicateFileCMD);
     CommandManager.register(Strings.CMD_FILE_DOWNLOAD_PROJECT, Commands.FILE_DOWNLOAD_PROJECT, _downloadFolderCommand);
     CommandManager.register(Strings.CMD_FILE_DOWNLOAD, Commands.FILE_DOWNLOAD, _downloadCommand);
+    CommandManager.register(Strings.CMD_FILE_UPLOAD_PROJECT, Commands.FILE_UPLOAD_PROJECT, _uploadFolderCommand);
 
     // Define the preference to decide how to sort the Project Tree files
     PreferencesManager.definePreference(SORT_DIRECTORIES_FIRST, "boolean", true, {
@@ -2396,6 +2460,7 @@ define(function (require, exports, module) {
     exports.shouldShow                    = ProjectModel.shouldShow;
     exports.shouldIndex                   = ProjectModel.shouldIndex;
     exports.openProject                   = openProject;
+    exports.downloadAndOpenProject        = downloadAndOpenProject;
     exports.getFileTreeContext            = getFileTreeContext;
     exports.getSelectedItem               = getSelectedItem;
     exports.getContext                    = getContext;

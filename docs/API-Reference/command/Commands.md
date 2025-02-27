@@ -39,6 +39,12 @@ Duplicates the selected file or folder
 Duplicates the selected file
 
 **Kind**: global variable  
+<a name="FILE_UPLOAD_PROJECT"></a>
+
+## FILE\_UPLOAD\_PROJECT
+Uploads the entire project to cloud storage
+
+**Kind**: global variable  
 <a name="FILE_DOWNLOAD"></a>
 
 ## FILE\_DOWNLOAD

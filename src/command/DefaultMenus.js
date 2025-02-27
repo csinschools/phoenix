@@ -133,6 +133,7 @@ define(function (require, exports, module) {
         menu.addMenuDivider();
         menu.addMenuItem(Commands.FILE_SAVE);
         menu.addMenuItem(Commands.FILE_SAVE_ALL);
+        menu.addMenuItem(Commands.FILE_UPLOAD_PROJECT, undefined, undefined, undefined, {});                
         if(Phoenix.isNativeApp){
             menu.addMenuItem(Commands.FILE_SAVE_AS);
             // save as is not yet supported in browser as in our vfs implements only open folder, so vfs needs to
