@@ -362,3 +362,53 @@ define(function (require) {
         require(["brackets"], ()=>{}, _recoverOnFailure);
     });
 });
+
+function showOverlay() {
+    // Show overlay before fetch starts
+    //document.getElementById("loadingOverlay").classList.add("active");
+    var overlay = document.getElementById("loadingOverlay");
+    overlay.style.visibility = "visible";
+    var spinner = document.getElementById("spinner");
+    overlay.append(spinner);
+    showSpinner();
+}
+
+function hideOverlay() {
+    // Show overlay before fetch starts
+    //document.getElementById("loadingOverlay").classList.remove("active");
+    var overlay = document.getElementById("loadingOverlay");
+    overlay.style.visibility = "hidden";
+    hideSpinner();
+}
+
+
+function showSpinner() {
+    var spinner = document.getElementById("spinner");
+    // already spinning
+
+    //spinner.style.display = "block";
+    spinner.style.position = "absolute";
+    spinner.style.display = "block";
+    spinner.style.top = "100px";
+    spinner.style.zIndex = "1000";
+}
+function hideSpinner() {
+    var spinner = document.getElementById("spinner");
+    spinner.style.display = "none";
+}
+
+function showURLDialog(msg, url) {
+    document.getElementById("copyToClip").style.display = "inline"; 
+    document.getElementById("urlContent").innerHTML = msg;
+    document.getElementById("generatedURL").text = url;
+    var urlDialog = document.getElementById("urlDialog");
+    urlDialog.style.display = "block";      
+    urlDialog.style.position = "absolute";      
+    urlDialog.style.top = "100px";     
+    urlDialog.style.zIndex = "999";
+}
+
+function copyURLToClipboard() {
+	navigator.clipboard.writeText(document.getElementById("generatedURL").text);
+	document.getElementById("copyToClip").innerText = "Copied!";
+}

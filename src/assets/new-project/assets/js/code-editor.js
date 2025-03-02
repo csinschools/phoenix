@@ -188,6 +188,7 @@ function initCodeEditor() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "open-folder");
         newProjectExtension.openFolder();
     };
+    /*
     document.getElementById("viewMore").onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "viewMore");
         window.location.href = 'new-project-more.html';
@@ -207,7 +208,7 @@ function initCodeEditor() {
     document.getElementById("newGitHubProject").onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "github-project");
         window.location.href = 'new-project-github.html';
-    };
+    };    
     document.getElementById("exploreBtn").onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "games");
         newProjectExtension.setupExploreProject()
@@ -215,6 +216,7 @@ function initCodeEditor() {
                 openProject(newProjectExtension.getExploreProjectPath());
             }).catch(console.error);
     };
+    */
     document.getElementById("defaultProjectButton").onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "default-project");
         newProjectExtension.setupStartupProject()
@@ -245,7 +247,7 @@ function initCodeEditor() {
     document.getElementById("newHTMLBtn").onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "html5");
         //newProjectFromURLScreen(getPhoenixAbsURL("assets/sample-projects/HTML5.zip"),
-        newProjectFromURLScreen(("http://localhost:3000/zip/get/?id=9xW8E3mqD"),
+        newProjectFromURLScreen(("https://phcode-live.ts.r.appspot.com/zip/get/?id=9xW8E3mqD"),
             "html project", Strings.NEW_HTML, {
             previewURL: `${getPhoenixAbsURL("assets/sample-projects/HTML5/index.html")}`});
     };

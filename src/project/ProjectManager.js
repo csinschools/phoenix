@@ -1836,6 +1836,8 @@ define(function (require, exports, module) {
         let projectName = path.basename(downloadPath);
         let message = StringUtils.format(Strings.DOWNLOADING_FILE, projectName);
         setProjectBusy(true, message);
+        showOverlay();
+        showSpinner();
         ZipUtils.zipFolder(downloadPath).then(zip=>{
             return zip.generateAsync({type:"blob"});
         }).then(async function (blob) {
@@ -1854,6 +1856,7 @@ define(function (require, exports, module) {
                 const result = await response.json();
                 console.log("Upload Success:", result);
                 alert(`File uploaded! Download URL: ${result.fileUrl}`);
+                showURLDialog(`File uploaded! Download URL: ${result.fileUrl}`, result.fileUrl);
             } catch (error) {
                 console.error("Upload Error:", error);
             }            
@@ -1861,6 +1864,9 @@ define(function (require, exports, module) {
             _zipFailed(downloadPath);
         }).finally(()=>{
             setProjectBusy(false, message);
+            hideSpinner();
+            hideOverlay();
+            
         });        
     }
 
