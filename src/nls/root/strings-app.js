@@ -21,7 +21,7 @@
 
 define({
     // product-specific strings
-    "APP_NAME": "Phoenix Code",
+    "APP_NAME": "Code for Schools HTML Editor",
 
     // Self locales (used by Debug > Switch Language)
     "LOCALE_AR": "عربي",

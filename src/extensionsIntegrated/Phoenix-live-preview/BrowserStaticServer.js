@@ -98,11 +98,12 @@ define(function (require, exports, module) {
 
     let _staticServerInstance, $livepreviewServerIframe;
 
-    const LIVE_PREVIEW_STATIC_SERVER_BASE_URL = "https://phcode.live/";
+    //const LIVE_PREVIEW_STATIC_SERVER_BASE_URL = "https://phcode.live/";
     // #LIVE_PREVIEW_STATIC_SERVER_BASE_URL_OVERRIDE uncomment below line if you are developing -
     // live preview server for browser.
-    // const LIVE_PREVIEW_STATIC_SERVER_BASE_URL = "http://localhost:8001/";
-    // const LIVE_PREVIEW_STATIC_SERVER_ORIGIN = "http://localhost:8001";
+    // You NEED the trailing slash / at the end of the URL!!!
+    const LIVE_PREVIEW_STATIC_SERVER_BASE_URL = "https://phcode-live.ts.r.appspot.com/";
+    //const LIVE_PREVIEW_STATIC_SERVER_BASE_URL = "http://localhost:8001/";
 
     const PREVIEW_BASE_URL = `${LIVE_PREVIEW_STATIC_SERVER_BASE_URL}vfs/PHOENIX_LIVE_PREVIEW_${Phoenix.PHOENIX_INSTANCE_ID}`;
     const BASE_URL_PATH_PREFIX = `/vfs/PHOENIX_LIVE_PREVIEW_${Phoenix.PHOENIX_INSTANCE_ID}`;

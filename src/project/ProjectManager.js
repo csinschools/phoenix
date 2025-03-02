@@ -840,7 +840,13 @@ define(function (require, exports, module) {
      * @return {!string} fullPath reference
      */
     function getWelcomeProjectPath() {
-        return ProjectModel._ensureTrailingSlash(Phoenix.VFS.getDefaultProjectDir());
+        
+        console.log("getting welcome project path");
+        let path = Phoenix.VFS.getDefaultProjectDir();
+        console.log("getDefaultProjectDir:", path);
+        path = ProjectModel._ensureTrailingSlash(path);
+        console.log("welcome project path:", path);
+        return path;//ProjectModel._ensureTrailingSlash(Phoenix.VFS.getDefaultProjectDir());
     }
 
     function getPlaceholderProjectPath() {

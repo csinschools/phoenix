@@ -1,6 +1,6 @@
 {
-    "short_name": "Phoenix Code",
-    "name": "Phoenix Code",
+    "short_name": "Code for Schools HTML Editor",
+    "name": "Code for Schools HTML Editor",
     "description": "A text editor designed to make coding as intuitive and fun as playing a video game - specially crafted for web developers, designers, and students.",
     "start_url": "/",
     "scope": "/",

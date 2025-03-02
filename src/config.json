@@ -36,7 +36,7 @@
         "buildtype": "dev",
         "bugsnagEnv": "development"
     },
-    "name": "Phoenix Code",
+    "name": "Code for Schools HTML Editor",
     "version": "4.1.0-0",
     "apiVersion": "4.1.0",
     "homepage": "https://core.ai",

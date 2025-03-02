@@ -33,7 +33,8 @@ define(function (require, exports, module) {
     require("./RemoteFileAdapter/main");
     require("./QuickOpen/main");
     require("./Phoenix/main");
-    require("./InAppNotifications/main");
+    // disabling in-app notifications for now
+    //require("./InAppNotifications/main");
     require("./NoDistractions/main");
     require("./Phoenix-live-preview/main");
     require("./NavigationAndHistory/main");

@@ -352,6 +352,7 @@
                 TRUSTED_ORIGINS: {
                     // if modifying this list, make sure to update in https://github.com/phcode-dev/phcode.live/blob/main/docs/trustedOrigins.js
                     // extensions may add their trusted origin to this list at any time.
+                    'http://localhost:1000': true, // phcode dev server
                     'http://localhost:8000': true, // phcode dev server
                     'http://localhost:8001': true, // phcode dev live preview server
                     'http://localhost:5000': true, // playwright tests
@@ -364,7 +365,9 @@
                     'https://phcode.dev': true,
                     'https://dev.phcode.dev': true,
                     'https://staging.phcode.dev': true,
-                    'https://create.phcode.dev': true
+                    'https://create.phcode.dev': true,
+                    'https://phcode-live.ts.r.appspot.com': true,
+                    'https://csinschools.io': true
                 }
             };
             window.Phoenix.isNativeApp = window.Phoenix.browser.isTauri;
@@ -809,7 +812,7 @@
                 <div id="newProject" class="new-project-btn btn-alt-quiet"></div>
             </div>
             <div>
-                <a id="phcode-io-main-nav" href="https://phcode.io" target="_blank" rel="noopener">phcode.io</a>
+                <a id="phcode-io-main-nav" href="https://codeforschools.com" target="_blank" rel="noopener">Code for Schools</a>
             </div>
             <div id="mainNavBarRight">
                 <div id="navBackButton" class="nav-back-btn btn-alt-quiet"></div>

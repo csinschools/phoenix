@@ -59,10 +59,11 @@ img {
 }
 
 #logo {
-    height: 35vh;
+    height: 25vh;
     vertical-align: middle;
     border-style: none;
     box-sizing: border-box;
+    padding: 40px;
 
 }
 

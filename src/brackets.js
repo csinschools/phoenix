@@ -324,6 +324,9 @@ define(function (require, exports, module) {
 
         if (!params.get("skipSampleProjectLoad") && !PreferencesManager.getViewState("afterFirstLaunch")) {
             PreferencesManager.setViewState("afterFirstLaunch", "true");
+
+            initialProjectPath = ProjectManager.getStartupProjectPath();
+            
             if (ProjectManager.isWelcomeProjectPath(initialProjectPath)) {
                 FileSystem.resolve(initialProjectPath + "index.html", function (err, file) {
                     if (!err) {
