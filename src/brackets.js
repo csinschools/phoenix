@@ -381,16 +381,48 @@ define(function (require, exports, module) {
         // Finish UI initialization
         ViewCommandHandlers.restoreFontSize();
         if (params.get("id")) {
+            let cancelled = false;
+            Dialogs.showModalDialog(
+                DefaultDialogs.DIALOG_ID_PROCESSING,
+                "Downloading Project",
+                "Downloading and uncompressing project, please wait...<span class='loader-spinner'></span>",
+                [
+                    {
+                        className: Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                        id: Dialogs.DIALOG_BTN_CANCEL,
+                        text: Strings.CANCEL
+                    }
+                ]
+            )
+            .done(function (id) {
+                if (id === Dialogs.DIALOG_BTN_CANCEL) {
+                    cancelled = true;
+                    return;
+                }
+            });
+
+            // bring the downloading dialog to the front
+            $(`.${DefaultDialogs.DIALOG_ID_PROCESSING}`).css("z-index", "1000000");
+            
             ProjectManager.downloadAndOpenProject(`https://codestore-348206.ts.r.appspot.com/zip/get/?id=${params.get("id")}`).then(function() {
-                _initBrackets(extensionLoaderPromise);
+                if (cancelled) {
+                    _openStartupProject(extensionLoaderPromise);
+                } else {
+                    Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);
+                    _initBrackets(extensionLoaderPromise);
+                }
             });
         } else {
-            ProjectManager.getStartupProjectPath().then((initialProjectPath)=>{
-                ProjectManager.openProject(initialProjectPath).always(function () {
-                    _initBrackets(extensionLoaderPromise);
-                });
-            });
+            _openStartupProject(extensionLoaderPromise);
         }
+    }
+
+    function _openStartupProject(extensionLoaderPromise) {
+        ProjectManager.getStartupProjectPath().then((initialProjectPath)=>{
+            ProjectManager.openProject(initialProjectPath).always(function () {
+                _initBrackets(extensionLoaderPromise);
+            });
+        });
     }
 
     /**

@@ -50,33 +50,35 @@ define(function (require, exports, module) {
 
     // Load dependent modules
     const AppInit             = require("utils/AppInit"),
-        Async               = require("utils/Async"),
-        PreferencesDialogs  = require("preferences/PreferencesDialogs"),
-        PreferencesManager  = require("preferences/PreferencesManager"),
-        DocumentManager     = require("document/DocumentManager"),
-        MainViewManager     = require("view/MainViewManager"),
-        CommandManager      = require("command/CommandManager"),
-        Commands            = require("command/Commands"),
-        Dialogs             = require("widgets/Dialogs"),
-        DefaultDialogs      = require("widgets/DefaultDialogs"),
-        EventDispatcher     = require("utils/EventDispatcher"),
-        LanguageManager     = require("language/LanguageManager"),
-        Menus               = require("command/Menus"),
-        StringUtils         = require("utils/StringUtils"),
-        Strings             = require("strings"),
-        FileSystem          = require("filesystem/FileSystem"),
-        FileViewController  = require("project/FileViewController"),
-        PerfUtils           = require("utils/PerfUtils"),
-        FileUtils           = require("file/FileUtils"),
-        FileSystemError     = require("filesystem/FileSystemError"),
-        Urls                = require("i18n!nls/urls"),
-        FileSyncManager     = require("project/FileSyncManager"),
-        ProjectModel        = require("project/ProjectModel"),
-        FileTreeView        = require("project/FileTreeView"),
-        WorkingSetView      = require("project/WorkingSetView"),
-        ViewUtils           = require("utils/ViewUtils"),
-        ZipUtils            = require("utils/ZipUtils"),
-        Metrics             = require("utils/Metrics");
+        Async                   = require("utils/Async"),
+        PreferencesDialogs      = require("preferences/PreferencesDialogs"),
+        PreferencesManager      = require("preferences/PreferencesManager"),
+        DocumentManager         = require("document/DocumentManager"),
+        MainViewManager         = require("view/MainViewManager"),
+        CommandManager          = require("command/CommandManager"),
+        Commands                = require("command/Commands"),
+        Dialogs                 = require("widgets/Dialogs"),
+        DefaultDialogs          = require("widgets/DefaultDialogs"),
+        EventDispatcher         = require("utils/EventDispatcher"),
+        LanguageManager         = require("language/LanguageManager"),
+        Menus                   = require("command/Menus"),
+        StringUtils             = require("utils/StringUtils"),
+        Strings                 = require("strings"),
+        FileSystem              = require("filesystem/FileSystem"),
+        FileViewController      = require("project/FileViewController"),
+        PerfUtils               = require("utils/PerfUtils"),
+        FileUtils               = require("file/FileUtils"),
+        FileSystemError         = require("filesystem/FileSystemError"),
+        Urls                    = require("i18n!nls/urls"),
+        FileSyncManager         = require("project/FileSyncManager"),
+        ProjectModel            = require("project/ProjectModel"),
+        FileTreeView            = require("project/FileTreeView"),
+        WorkingSetView          = require("project/WorkingSetView"),
+        ViewUtils               = require("utils/ViewUtils"),
+        ZipUtils                = require("utils/ZipUtils"),
+        Mustache                = require("thirdparty/mustache/mustache"),
+        uploadProjectTemplate   = require("text!./html/upload-project-template.html"),        
+        Metrics                 = require("utils/Metrics");
 
     // Needed to ensure that menus are set up when we need them.
     // See #10115
@@ -1831,16 +1833,42 @@ define(function (require, exports, module) {
             _getProjectDisplayNameOrPath(fullPath));
     }
 
-    function _uploadFolderCommand(downloadPath) {
+    async function _uploadFolderCommand(downloadPath) {
+        await CommandManager.execute(Commands.FILE_SAVE_ALL_BEFORE_UPLOAD);
+
+
         downloadPath = downloadPath || getProjectRoot().fullPath;
         let projectName = path.basename(downloadPath);
         let message = StringUtils.format(Strings.DOWNLOADING_FILE, projectName);
-        setProjectBusy(true, message);
-        showOverlay();
-        showSpinner();
+        let cancelled = false;
+
+        Dialogs.showModalDialog(
+            DefaultDialogs.DIALOG_ID_PROCESSING,
+            "Uploading Project",
+            "Zipping project and uploading to server, please wait...<span class='loader-spinner'></span>",
+            [
+                {
+                    className: Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                    id: Dialogs.DIALOG_BTN_CANCEL,
+                    text: Strings.CANCEL
+                }
+            ]
+        )
+        .done(function (id) {
+            if (id === Dialogs.DIALOG_BTN_CANCEL) {
+                cancelled = true;
+                return;
+            }
+        });
+                    
+        Metrics.countEvent(Metrics.EVENT_TYPE.FILE_UPLOAD_PROJECT, "dialogue", "open");
+
         ZipUtils.zipFolder(downloadPath).then(zip=>{
             return zip.generateAsync({type:"blob"});
         }).then(async function (blob) {
+            if (cancelled) {
+                throw new Error("Cancelled");
+            }
             //
             // Create FormData and append ZIP file
             const formData = new FormData();
@@ -1853,20 +1881,29 @@ define(function (require, exports, module) {
                     body: formData
                 });
 
+                if (cancelled) {
+                    throw new Error("Cancelled");
+                }   
+
                 const result = await response.json();
+
+                if (cancelled) {
+                    throw new Error("Cancelled");
+                }    
+
                 console.log("Upload Success:", result);
                 alert(`File uploaded! Download URL: ${result.fileUrl}`);
-                showURLDialog(`File uploaded! Download URL: ${result.fileUrl}`, result.fileUrl);
+
+                Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);
+                Dialogs.showInfoDialog("Project Uploaded", `File uploaded! Download URL: ${result.fileUrl}`, result.fileUrl);
+                //showURLDialog(`File uploaded! Download URL: ${result.fileUrl}`, result.fileUrl);
             } catch (error) {
                 console.error("Upload Error:", error);
             }            
         }).catch(()=>{
             _zipFailed(downloadPath);
         }).finally(()=>{
-            setProjectBusy(false, message);
-            hideSpinner();
-            hideOverlay();
-            
+            Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);           
         });        
     }
 

@@ -1490,6 +1490,73 @@ define(function (require, exports, module) {
         return promise;
     }
 
+    function handleSaveAllBeforeUpload() {
+        return _saveFileListBeforeUpload(MainViewManager.getWorkingSet(MainViewManager.ALL_PANES));
+    }
+
+    function _saveFileListBeforeUpload(list){
+        var result      = new $.Deferred(),
+            unsavedDocs = [];
+
+        list.forEach(function (file) {
+            var doc = DocumentManager.getOpenDocumentForPath(file.fullPath);
+            if (doc && doc.isDirty) {
+                unsavedDocs.push(doc);
+            }
+        });
+
+        if (unsavedDocs.length === 0) {
+            // No unsaved changes or we want to ignore them, so we can proceed without a prompt
+            result.resolve();
+
+        } else {
+            // Multiple unsaved files: show a single bulk prompt listing all files
+            var message = Strings.SAVE_CLOSE_MULTI_MESSAGE + FileUtils.makeDialogFileList(_.map(unsavedDocs, _shortTitleForDocument));
+
+            Dialogs.showModalDialog(
+                DefaultDialogs.DIALOG_ID_SAVE_CLOSE,
+                Strings.SAVE_CLOSE_TITLE,
+                message,
+                [
+                    {
+                        className: Dialogs.DIALOG_BTN_CLASS_LEFT,
+                        id: Dialogs.DIALOG_BTN_DONTSAVE,
+                        text: Strings.DONT_SAVE
+                    },
+                    {
+                        className: Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                        id: Dialogs.DIALOG_BTN_CANCEL,
+                        text: Strings.CANCEL
+                    },
+                    {
+                        className: Dialogs.DIALOG_BTN_CLASS_PRIMARY,
+                        id: Dialogs.DIALOG_BTN_OK,
+                        text: Strings.SAVE
+                    }
+                ]
+            )
+                .done(function (id) {
+                    if (id === Dialogs.DIALOG_BTN_CANCEL) {
+                        dispatchAppQuitCancelledEvent();
+                        result.reject();
+                    } else if (id === Dialogs.DIALOG_BTN_OK) {
+                        // Save all unsaved files, then if that succeeds, close all
+                        _saveFileList(list).done(function (listAfterSave) {
+                            // List of files after save may be different, if any were Untitled
+                            result.resolve(listAfterSave);
+                        }).fail(function () {
+                            result.reject();
+                        });
+                    } else {
+                        // "Don't Save" case--we can just go ahead and close all files.
+                        result.resolve();
+                    }
+                });
+        }
+
+        return result.promise();
+    }
+
     /**
      * @param {!Array.<File>} list - the list of files to close
      * @param {boolean} promptOnly - true to just prompt for saving documents with actually closing them.
@@ -2334,6 +2401,9 @@ define(function (require, exports, module) {
     CommandManager.register(Strings.CMD_FILE_SAVE_AS,                Commands.FILE_SAVE_AS,                   handleFileSaveAs);
     CommandManager.register(Strings.CMD_FILE_RENAME,                 Commands.FILE_RENAME,                    handleFileRename);
     CommandManager.register(Strings.CMD_FILE_DELETE,                 Commands.FILE_DELETE,                    handleFileDelete);
+
+    CommandManager.register(Strings.CMD_FILE_DELETE,                 Commands.FILE_SAVE_ALL_BEFORE_UPLOAD,    handleSaveAllBeforeUpload);
+    
 
     // Close Commands
     CommandManager.register(Strings.CMD_FILE_CLOSE,                  Commands.FILE_CLOSE,                     handleFileClose);

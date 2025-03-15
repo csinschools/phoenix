@@ -154,24 +154,26 @@ define(function (require, exports, module) {
 
     ProjectManager.on(ProjectManager.EVENT_AFTER_PROJECT_OPEN, projectOpened);
 
-    function init() {
+    function init(nowelcome = false) { 
         _addMenuEntries();
-        const shouldShowWelcome = PhStore.getItem("new-project.showWelcomeScreen") || 'Y';
-        if(shouldShowWelcome !== 'Y') {
-            Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "dialogue", "disabled");
-            guidedTour.startTourIfNeeded();
-            return;
+        if (!nowelcome) {
+            const shouldShowWelcome = PhStore.getItem("new-project.showWelcomeScreen") || 'Y';
+            if(shouldShowWelcome !== 'Y') {
+                Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "dialogue", "disabled");
+                guidedTour.startTourIfNeeded();
+                return;
+            }
+            _shouldNotShowDialog()
+                .then(notShow=>{
+                    if(notShow){
+                        return;
+                    }
+                    _showNewProjectDialogue();
+                    DocumentCommandHandlers.on(DocumentCommandHandlers._EVENT_OPEN_WITH_FILE_FROM_OS, ()=>{
+                        closeDialogue();
+                    });
+                });            
         }
-        _shouldNotShowDialog()
-            .then(notShow=>{
-                if(notShow){
-                    return;
-                }
-                _showNewProjectDialogue();
-                DocumentCommandHandlers.on(DocumentCommandHandlers._EVENT_OPEN_WITH_FILE_FROM_OS, ()=>{
-                    closeDialogue();
-                });
-            });
     }
 
     function _showProjectErrorDialogue(desc, projectPath, err) {

@@ -122,6 +122,9 @@ define(function (require, exports, module) {
         if (!params.get("id")) {
             newProject.init();            
             newFeature.init();
+        } else {
+            // no welcome screens for new projects
+            newProject.init(true);            
         }
 
 

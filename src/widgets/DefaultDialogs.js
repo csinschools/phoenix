@@ -65,4 +65,10 @@ define(function (require, exports, module) {
      * @constant {string}
      */
     exports.DIALOG_ID_CHANGE_EXTENSIONS = "change-marked-extensions";
+
+    /**
+     * ID for `change extensions` dialog
+     * @constant {string}
+     */
+    exports.DIALOG_ID_PROCESSING = "processing-dialog";    
 });

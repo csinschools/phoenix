@@ -368,8 +368,8 @@ function showOverlay() {
     //document.getElementById("loadingOverlay").classList.add("active");
     var overlay = document.getElementById("loadingOverlay");
     overlay.style.visibility = "visible";
-    var spinner = document.getElementById("spinner");
-    overlay.append(spinner);
+    var spinner = document.getElementById("spinnerContainer");
+    overlay.append(spinnerContainer);
     showSpinner();
 }
 
@@ -383,17 +383,18 @@ function hideOverlay() {
 
 
 function showSpinner() {
-    var spinner = document.getElementById("spinner");
-    // already spinning
-
-    //spinner.style.display = "block";
-    spinner.style.position = "absolute";
-    spinner.style.display = "block";
-    spinner.style.top = "100px";
-    spinner.style.zIndex = "1000";
+    var spinnerContainer = document.getElementById("spinnerContainer");
+    //var spinner = document.getElementById("spinner");
+    // already spinning   
+    spinnerContainer.style.display = "block";
+    spinnerContainer.style.zIndex = "1000";
+    
+    spinnerContainer.style.position = "absolute";    
+    spinnerContainer.style.top = "100px";
+    
 }
 function hideSpinner() {
-    var spinner = document.getElementById("spinner");
+    var spinner = document.getElementById("spinnerContainer");
     spinner.style.display = "none";
 }
 

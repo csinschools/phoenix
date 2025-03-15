@@ -76,6 +76,9 @@ define(function (require, exports, module) {
     /** Saves all open files */
     exports.FILE_SAVE_ALL               = "file.saveAll";               // DocumentCommandHandlers.js   handleFileSaveAll()
 
+    /** Saves all open files */
+    exports.FILE_SAVE_ALL_BEFORE_UPLOAD = "file.saveAllBeforeUpload";   // DocumentCommandHandlers.js   handleSaveAllBeforeUpload()
+
     /** Saves current file with a new name */
     exports.FILE_SAVE_AS                = "file.saveAs";                // DocumentCommandHandlers.js   handleFileSaveAs()
 

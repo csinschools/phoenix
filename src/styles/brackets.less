@@ -3588,11 +3588,12 @@ label input {
 }
 
 .sk-chase {
-	width: 40px;
-	height: 40px;
-	position: relative;
-	animation: sk-chase 2.5s infinite linear both;
-	margin: 40px;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    animation: sk-chase 2.5s infinite linear both;
+    margin: 0 auto; // Changed from margin: 40px to center horizontally
+    display: block; // Ensure block display
 }
 
 .sk-chase-dot {
@@ -3612,6 +3613,29 @@ label input {
 	background-color: #fff;
 	border-radius: 100%;
 	animation: sk-chase-dot-before 2.0s infinite ease-in-out both;
+}
+
+#spinnerContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; // Added to center vertically
+    gap: 20px;
+    color: #fff; // Added for better text visibility
+}
+
+#spinnerText {
+    margin: 40px;
+    text-align: center;
+}
+
+#spinner {
+    text-align: center;
 }
 
 .sk-chase-dot:nth-child(1) { animation-delay: -1.1s; }
@@ -3659,3 +3683,38 @@ label input {
     visibility: hidden; /* Hidden by default */
     opacity: 1;
 }
+
+.loader-spinner {
+        width: 48px;
+        height: 48px;
+        margin: 10px auto;
+        display: block;
+        border-radius: 50%;
+        position: relative;
+        animation: rotate 1s linear infinite
+      }
+.loader-spinner::before , .loader-spinner::after {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    inset: 0px;
+    border-radius: 50%;
+    border: 5px solid #FFF;
+    animation: prixClipFix 2s linear infinite ;
+}
+.loader-spinner::after{
+    transform: rotate3d(90, 90, 0, 180deg );
+    border-color: #FF3D00;
+}
+
+@keyframes rotate {
+    0%   {transform: rotate(0deg)}
+    100%   {transform: rotate(360deg)}
+}
+
+@keyframes prixClipFix {
+    0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+    50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+    75%, 100%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+}
+    
