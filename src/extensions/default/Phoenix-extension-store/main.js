@@ -89,7 +89,7 @@ define(function (require, exports, module) {
     toggleCmd = CommandManager.register("Extensions Panel", "toggleExtensionsPanel", _toggleVisibility);
 
     function _createExtensionPanel() {
-        $icon = $("#toolbar-extension-manager");
+        $icon = $("#toolbar-chat");
         $icon.removeClass("hidden-element");
         $icon.click(_toggleVisibility);
         $panel = $(panelHTML);

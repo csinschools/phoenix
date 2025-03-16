@@ -380,6 +380,8 @@ define(function (require, exports, module) {
 
         // Finish UI initialization
         ViewCommandHandlers.restoreFontSize();
+
+        // checking for startup project via id query param
         if (params.get("id")) {
             let cancelled = false;
             Dialogs.showModalDialog(
@@ -401,17 +403,30 @@ define(function (require, exports, module) {
                 }
             });
 
-            // bring the downloading dialog to the front
+            // bring the downloading dialog to the front, otherwise it will be hidden behind the loading overlay
             $(`.${DefaultDialogs.DIALOG_ID_PROCESSING}`).css("z-index", "1000000");
+
+            // strip off any anchors
+            let projectId = params.get("id").split("#")[0];
             
-            ProjectManager.downloadAndOpenProject(`https://codestore-348206.ts.r.appspot.com/zip/get/?id=${params.get("id")}`).then(function() {
-                if (cancelled) {
-                    _openStartupProject(extensionLoaderPromise);
-                } else {
+            ProjectManager.downloadAndOpenProject(`https://codestore-348206.ts.r.appspot.com/zip/get/?id=${projectId}`)
+                .then(function() {
+                    if (cancelled) {
+                        _openStartupProject(extensionLoaderPromise);
+                    } else {
+                        Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);
+                        _initBrackets(extensionLoaderPromise);
+                    }
+                })
+                .catch(function() {
                     Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);
-                    _initBrackets(extensionLoaderPromise);
-                }
-            });
+                    Dialogs.showErrorDialog("Error loading project from server", "There was an error loading the project from the server!")
+                    .done(()=>{
+                        _openStartupProject(extensionLoaderPromise);      
+                    });             
+                    // bring the error dialog to the front, otherwise it will be hidden behind the loading overlay
+                    $(`.${DefaultDialogs.DIALOG_ID_ERROR}`).css("z-index", "1000000");       
+                });
         } else {
             _openStartupProject(extensionLoaderPromise);
         }

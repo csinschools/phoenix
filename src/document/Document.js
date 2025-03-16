@@ -493,6 +493,15 @@ define(function (require, exports, module) {
     };
 
     /**
+     * Returns the number of lines in the editor
+     * @return {!int}
+     */
+    Document.prototype.getLineCount = function () {
+        this._ensureMasterEditor();
+        return this._masterEditor._codeMirror.lineCount();
+    };    
+
+    /**
      * Batches a series of related Document changes. Repeated calls to replaceRange() should be wrapped in a
      * batch for efficiency. Begins the batch, calls doOperation(), ends the batch, and then returns.
      * @param {function()} doOperation
