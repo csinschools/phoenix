@@ -1457,16 +1457,25 @@ define(function (require, exports, module) {
                             console.error("could not load phoenix default project from zip file!", err);
                             reject();
                         } else {
-                            ZipUtils.unzipBinDataToLocation(data, projectPath)
-                            .then(()=>{
-                                openProject(projectPath)
-                                    .then(resolve)
-                                    .fail(reject);
-                                console.log("Project Setup complete: ", projectPath);
-                            })
-                            .catch((err)=>{
-                                console.error(err);
-                                reject(err);
+                            // delete any existing project at the path
+                            Phoenix.fs.unlink(projectPath, function (err) {
+                                Phoenix.fs.mkdir(projectPath, function (err, stat) {
+                                    if (err) {
+                                        throw (err);
+                                    } else {
+                                        ZipUtils.unzipBinDataToLocation(data, projectPath)
+                                        .then(()=>{
+                                            openProject(projectPath)
+                                                .then(resolve)
+                                                .fail(reject);
+                                            console.log("Project Setup complete: ", projectPath);
+                                        })
+                                        .catch((err)=>{
+                                            console.error(err);
+                                            reject(err);
+                                        });                                        
+                                    }
+                                });
                             });
                         }
                     }
@@ -1891,12 +1900,13 @@ define(function (require, exports, module) {
                     throw new Error("Cancelled");
                 }    
 
+                let id = result.fileUrl.split("/").at(-1);
+
                 console.log("Upload Success:", result);
-                alert(`File uploaded! Download URL: ${result.fileUrl}`);
 
                 Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);
-                Dialogs.showInfoDialog("Project Uploaded", `File uploaded! Download URL: ${result.fileUrl}`, result.fileUrl);
-                //showURLDialog(`File uploaded! Download URL: ${result.fileUrl}`, result.fileUrl);
+                let url = `${Phoenix.baseURL}?id=${id}`;
+                Dialogs.showInfoDialog("Project Uploaded", `You can view your snapshotted project here:<p><a href='${url}'>${url}</a></p>`, id);
             } catch (error) {
                 console.error("Upload Error:", error);
             }            
