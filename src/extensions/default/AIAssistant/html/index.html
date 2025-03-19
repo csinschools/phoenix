@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>AI Assistant</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>                
+    </head>
+    <body>
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="input-container">
+                <textarea id="userInput" placeholder="Ask a coding question..."></textarea>
+                <div class="input-controls">
+                    <label>
+                        <input type="checkbox" id="includeContext">
+                        Include editor context
+                    </label>
+                    <button id="sendButton">Send</button>
+                </div>
+            </div>
+        </div>
+        <!--
+        Hello, world!
+        <input type="button" value="Send message to host" onclick="hoster.postMessage({handlerName: 'ai-assistant-host', eventName: 'GET_CONTEXT', message: null}, '*');">
+        -->
+        <script src="assistant.js"></script>
+    </body>
+</html>

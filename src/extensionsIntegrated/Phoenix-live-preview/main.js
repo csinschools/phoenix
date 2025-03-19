@@ -70,6 +70,8 @@ define(function (require, exports, module) {
         panelHTML       = require("text!./panel.html"),
         Dialogs = require("widgets/Dialogs"),
         DefaultDialogs = require("widgets/DefaultDialogs"),
+        EventManager = require("utils/EventManager"),
+        EventDispatcher = require("utils/EventDispatcher"),
         utils = require('./utils');
 
     const StateManager = PreferencesManager.stateManager;
@@ -198,10 +200,14 @@ define(function (require, exports, module) {
         _loadPreview(true);
     };
 
-    function _setProjectReadmePreviewdOnce() {
+    function setProjectReadmePreviewdOnce(event, value) {
+        _setProjectReadmePreviewdOnce(value);
+    }    
+
+    function _setProjectReadmePreviewdOnce(value = true) {
         const projectPath = ProjectManager.getProjectRoot().fullPath;
         const previewReadmeKey = `${PREVIEW_PROJECT_README_KEY}-${projectPath}`;
-        PhStore.setItem(previewReadmeKey, true);
+        PhStore.setItem(previewReadmeKey, value);
     }
 
     function _isProjectReadmePreviewdOnce() {
@@ -899,6 +905,13 @@ define(function (require, exports, module) {
 
     // private API to be used inside phoenix codebase only
     exports.LIVE_PREVIEW_PANEL_ID = LIVE_PREVIEW_PANEL_ID;
+
+    // exposing the setProjectReadmePreviewdOnce as an eventhandler to be reset upon 
+    // loading project by ?id query param
+    EventDispatcher.makeEventDispatcher(exports);
+    exports.on("setProjectReadmePreviewdOnce", setProjectReadmePreviewdOnce); 
+    EventManager.registerEventHandler("ph-livePreview", exports);
+    exports.setProjectReadmePreviewdOnce = setProjectReadmePreviewdOnce;
 });
 
 

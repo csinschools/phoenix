@@ -70,6 +70,7 @@ define(function (require, exports, module) {
     require("command/KeyboardOverlayMode");
     require("editor/EditorManager");
     require("project/FileViewController");
+    //require("extensionsIntegrated/Phoenix-live-preview/main");
 
     // Load dependent modules
     const AppInit             = require("utils/AppInit"),
@@ -415,6 +416,8 @@ define(function (require, exports, module) {
                         _openStartupProject(extensionLoaderPromise);
                     } else {
                         Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);
+                        // ensure README.md is viewed when ?id= project is opened
+                        EventManager.triggerEvent('ph-livePreview', 'setProjectReadmePreviewdOnce', false);             
                         _initBrackets(extensionLoaderPromise);
                     }
                 })
@@ -431,6 +434,12 @@ define(function (require, exports, module) {
             _openStartupProject(extensionLoaderPromise);
         }
     }
+
+    function _setProjectReadmePreviewdOnce(value = true) {
+        const projectPath = ProjectManager.getProjectRoot().fullPath;
+        const previewReadmeKey = `${LivePreview.PREVIEW_PROJECT_README_KEY}-${projectPath}`;
+        PhStore.setItem(previewReadmeKey, value);
+    }       
 
     function _openStartupProject(extensionLoaderPromise) {
         ProjectManager.getStartupProjectPath().then((initialProjectPath)=>{
