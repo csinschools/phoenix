@@ -21,7 +21,7 @@
 
 define({
     // product-specific strings
-    "APP_NAME": "Code for Schools HTML Editor",
+    "APP_NAME": "Code for Schools Web Editor",
 
     // Self locales (used by Debug > Switch Language)
     "LOCALE_AR": "عربي",

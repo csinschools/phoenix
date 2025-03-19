@@ -387,8 +387,8 @@ define(function (require, exports, module) {
             let cancelled = false;
             Dialogs.showModalDialog(
                 DefaultDialogs.DIALOG_ID_PROCESSING,
-                "Downloading Project",
-                "Downloading and uncompressing project, please wait...<span class='loader-spinner'></span>",
+                "Opening Project from Cloud",
+                "Opening project from the cloud, please wait...<span class='loader-spinner'></span>",
                 [
                     {
                         className: Dialogs.DIALOG_BTN_CLASS_NORMAL,

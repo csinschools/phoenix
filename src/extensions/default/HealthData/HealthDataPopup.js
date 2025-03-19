@@ -30,8 +30,11 @@ define(function (require, exports, module) {
 
     function showFirstLaunchTooltip() {
         const deferred = new $.Deferred();
+        // hiding toast notifications for now
+        /*
         NotificationUI.createToastFromTemplate(Strings.HEALTH_FIRST_POPUP_TITLE,
             `<div id="healthdata-firstlaunch-popup">${Strings.HEALTH_DATA_NOTIFICATION_MESSAGE}</div>`).done(deferred.resolve);
+        */
         return deferred.promise();
     }
 

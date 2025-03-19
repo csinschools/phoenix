@@ -1853,8 +1853,8 @@ define(function (require, exports, module) {
 
         Dialogs.showModalDialog(
             DefaultDialogs.DIALOG_ID_PROCESSING,
-            "Uploading Project",
-            "Zipping project and uploading to server, please wait...<span class='loader-spinner'></span>",
+            "Uploading Project to Cloud",
+            "Uploading project to the cloud, please wait...<span class='loader-spinner'></span>",
             [
                 {
                     className: Dialogs.DIALOG_BTN_CLASS_NORMAL,
@@ -1906,7 +1906,32 @@ define(function (require, exports, module) {
 
                 Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);
                 let url = `${Phoenix.baseURL}?id=${id}`;
-                Dialogs.showInfoDialog("Project Uploaded", `You can view your snapshotted project here:<p><a href='${url}'>${url}</a></p>`, id);
+                //Dialogs.showInfoDialog("Project Uploaded", `You can view your snapshotted project here:<p><a href='${url}'>${url}</a></p>`, id);
+                let dlg = Dialogs.showModalDialog(
+                    DefaultDialogs.DIALOG_ID_EXT_DELETED,
+                    "Project Uploaded",
+                    `You can view your snapshotted project here:<p><a href='${url}'>${url}</a></p>`,
+                    [
+                        { className: Dialogs.DIALOG_BTN_CLASS_LEFT, id: Dialogs.DIALOG_BTN_COPY, text: Strings.COPY },
+                        { className: Dialogs.DIALOG_BTN_CLASS_PRIMARY, id: Dialogs.DIALOG_BTN_OK, text: Strings.OK }
+                    ],
+                    false // autodismiss is false because we want the copy button to not dismiss the dialog
+                );
+
+                $dlg = dlg.getElement();
+    
+                $dlg.on("buttonClick", function (e, buttonId) {
+                    if (buttonId === Dialogs.DIALOG_BTN_OK) {
+                        dlg.close();
+                    } else if (buttonId === Dialogs.DIALOG_BTN_COPY) {                        
+                        Phoenix.app.copyToClipboard(url);
+                        let $copyButton = $dlg.find('[data-button-id="' + Dialogs.DIALOG_BTN_COPY + '"]');
+                        $copyButton.text(Strings.COPIED); // Optional: Update button text
+                        setTimeout(function () {
+                            $copyButton.text(Strings.COPY); 
+                        }, 1000);
+                    }
+                });  
             } catch (error) {
                 console.error("Upload Error:", error);
             }            

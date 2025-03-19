@@ -189,9 +189,13 @@ define(function (require, exports, module) {
                     'https://github.com/phcode-dev/phoenix');
             }
         });
+
+        // disable toast notifications for now
+        /*
         NotificationUI.createToastFromTemplate(Strings.ENJOYING_APP, notification, {
             dismissOnClick: false
         });
+        */
     }
 
     function _showRequestStarsPopup() {
@@ -290,6 +294,8 @@ define(function (require, exports, module) {
     }
 
     function _showSurveyNotification(surveyUrl, title) {
+        // disable toast notifications for now
+        /*
         NotificationUI.createToastFromTemplate(
             title || Strings.SURVEY_TITLE_VOTE_FOR_FEATURES_YOU_WANT,
             `<div class="survey-notification-popup">
@@ -300,6 +306,7 @@ define(function (require, exports, module) {
         setTimeout(()=>{
             $('.survey-notification-big').removeClass('forced-hidden');
         }, SURVEY_PRELOAD_DELAY);
+        */
     }
 
     function _showRepeatUserSurvey(surveyURL, intervalOverride, title, useDialog) {
@@ -372,7 +379,8 @@ define(function (require, exports, module) {
         tourStarted = true;
         _showNewProjectNotification();
         _showBeautifyNotification();
-        _showRequestStarsPopup();
-        _showSurveys();
+        // disabling some tour features for now
+        //_showRequestStarsPopup();
+        //_showSurveys();
     };
 });

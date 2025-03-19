@@ -221,6 +221,8 @@ define({
     "DELETE": "Delete",
     "BUTTON_YES": "Yes",
     "BUTTON_NO": "No",
+    "COPY": "Copy",
+    "COPIED": "Copied!",
 
     // Find, Replace, Find in Files
     "FIND_MATCH_INDEX": "{0} of {1}",

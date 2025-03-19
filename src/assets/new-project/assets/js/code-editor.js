@@ -225,11 +225,14 @@ function initCodeEditor() {
             }).catch(console.error);
     };
 
+    // we removed the download-phcode-banner from the html so this is not needed anymore
+    /*
     const banner = document.getElementById("download-phcode-banner");
     banner.onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "getApp.Click", window.top.Phoenix.platform);
         window.top.Phoenix.app.openURLInDefaultBrowser("https://phcode.io");
     };
+    
     if(!window.top.Phoenix.isNativeApp && !window.top.Phoenix.browser.isChromeOS && window.top.Phoenix.browser.isDeskTop) {
         banner.classList.remove("forced-hidden");
         document.getElementById("project-items-container").classList.add("even-layout");
@@ -243,11 +246,12 @@ function initCodeEditor() {
             document.getElementById("linux-logo").classList.remove("forced-hidden");
         }
     }
+    */
 
     document.getElementById("newHTMLBtn").onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "html5");
-        //newProjectFromURLScreen(getPhoenixAbsURL("assets/sample-projects/HTML5.zip"),
-        newProjectFromURLScreen(("https://phcode-live.ts.r.appspot.com/zip/get/?id=9xW8E3mqD"),
+        newProjectFromURLScreen(getPhoenixAbsURL("assets/sample-projects/HTML5.zip"),
+        //newProjectFromURLScreen(("https://phcode-live.ts.r.appspot.com/zip/get/?id=9xW8E3mqD"),
             "html project", Strings.NEW_HTML, {
             previewURL: `${getPhoenixAbsURL("assets/sample-projects/HTML5/index.html")}`});
     };

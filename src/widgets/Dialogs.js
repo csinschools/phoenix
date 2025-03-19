@@ -40,6 +40,13 @@ define(function (require, exports, module) {
         Mustache          = require("thirdparty/mustache/mustache");
 
     /**
+     * `COPY` dialog button ID
+     * @type {string}
+     * @const
+     */
+    let DIALOG_BTN_COPY = "copy";
+
+    /**
      * `CANCEL` dialog button ID
      * @type {string}
      * @const
@@ -438,9 +445,16 @@ define(function (require, exports, module) {
         });
 
         // Click handler for buttons
-        $dlg.one("click", ".dialog-button", function (e) {
-            _processButton($dlg, $(this).attr("data-button-id"), autoDismiss);
-        });
+        if (autoDismiss) {
+            $dlg.one("click", ".dialog-button", function (e) {
+                _processButton($dlg, $(this).attr("data-button-id"), autoDismiss);
+            });
+        } else {
+            // Changing query event handler from 'one' to 'on' to allow for multiple clicks on buttons when autodismiss is false
+            $dlg.on("click", ".dialog-button", function (e) {
+                _processButton($dlg, $(this).attr("data-button-id"), autoDismiss);
+            });       
+        }
 
         // Run the dialog
         $dlg
@@ -514,7 +528,16 @@ define(function (require, exports, module) {
      * @return {Dialog} the created dialog instance
      */
     function showInfoDialog(title, message, autoDismiss) {
-        return showModalDialog(DefaultDialogs.DIALOG_ID_INFO, title, message, null, autoDismiss);
+        var dlg = showModalDialog(DefaultDialogs.DIALOG_ID_INFO, title, message, null, autoDismiss);
+        // if (enableMouse) {
+        //     // Enable right-click on dialog
+        //     dlg.done(function (id) {
+        //         var $dlg = $(".modal");
+        //         $dlg.on("contextmenu");
+        //         $dlg.find(".modal-body").on("contextmenu");
+        //     });
+        // }
+        return dlg;
     }
 
     /**
@@ -573,6 +596,7 @@ define(function (require, exports, module) {
 
     window.addEventListener("resize", setDialogMaxSize);
 
+    exports.DIALOG_BTN_COPY              = DIALOG_BTN_COPY;
     exports.DIALOG_BTN_CANCEL            = DIALOG_BTN_CANCEL;
     exports.DIALOG_BTN_OK                = DIALOG_BTN_OK;
     exports.DIALOG_BTN_DONTSAVE          = DIALOG_BTN_DONTSAVE;

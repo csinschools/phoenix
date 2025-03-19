@@ -71,12 +71,14 @@ define(function (require, exports) {
         errorBody = window.debugMode ? `${errorBody}\n${errorStack}` : errorBody;
 
         if(options.useNotification){
+            /*
             NotificationUI.createToastFromTemplate(title,
                 `<textarea readonly style="width: 200px; height: 200px; cursor: text; resize: none;">${errorBody}</textarea>`, {
                     toastStyle: NotificationUI.NOTIFICATION_STYLES_CSS_CLASS.ERROR,
                     dismissOnClick: false,
                     instantOpen: true
                 });
+            */
         } else {
             const compiledTemplate = Mustache.render(errorDialogTemplate, {
                 title: title,
