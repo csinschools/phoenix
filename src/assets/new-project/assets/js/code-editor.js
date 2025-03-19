@@ -67,10 +67,10 @@ function getDisplayLocation(projectPath) {
     return Strings.PROJECT_FROM_BROWSER;
 }
 
-const imageHTML = `<img src="images/youtube_video.webp" alt="Phoenix Code on YouTube"
-    title="Phoenix Code on YouTube"
+const imageHTML = `<img src="images/youtube_video.png" alt="Code for Schools on YouTube"
+    title="Code for Schools on YouTube"
     style="cursor: pointer; width: 100%; height: 100%"
-    onclick="window.parent.brackets.app.openURLInDefaultBrowser('https://www.youtube.com/watch?v=vtks0cus0hA')"/>`;
+    onclick="window.parent.brackets.app.openURLInDefaultBrowser('https://www.youtube.com/watch?feature=player_embedded&v=Jkg3nAZ6vF8')"/>`;
 
 function _updateProjectCards() {
     let recentProjectList = $(document.getElementById('recentProjectList'));
@@ -256,7 +256,7 @@ function initCodeEditor() {
             previewURL: `${getPhoenixAbsURL("assets/sample-projects/HTML5/index.html")}`});
     };
     _updateProjectCards();
-    _showFirstTimeExperience();
+    //_showFirstTimeExperience();
     $("body").append($(`<script async defer src="https://buttons.github.io/buttons.js"></script>`));
     _attachSettingBtnEventListeners();
 }

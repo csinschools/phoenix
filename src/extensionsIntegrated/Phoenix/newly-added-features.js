@@ -28,11 +28,11 @@ define(function (require, exports, module) {
         Metrics = require("utils/Metrics");
 
     function _getUpdateMarkdownURL() {
-        return Phoenix.baseURL + "assets/default-project/en/Newly_added_features.md";
+        return Phoenix.baseURL + "assets/default-project/en/README.md";
     }
 
     function _getUpdateMarkdownLocalPath() {
-        return Phoenix.VFS.getDefaultProjectDir() + "Newly_added_features.md";
+        return Phoenix.VFS.getDefaultProjectDir() + "README.md";
     }
 
     async function _getUpdateMarkdownText() {
