@@ -1,14 +1,12 @@
-function onPageLoaded() {
-    // Write your javascript code here
-    console.log("page loaded");
-}
+// initialising variable to keep track of button clicks
+let numButtonClicks = 0;
+// looking up the mainDiv and storing it in a constant variable for use in the buttonClicked handler function
+const mainDiv = document.getElementById("mainDiv");
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Listen for clicks on elements with the class 'play-button'
-    document.querySelectorAll(".play-button").forEach(function (button) {
-        button.addEventListener("click", function () {
-            // When a play button is clicked, simulate a click on the <a> tag within the same .video-container
-            this.parentNode.querySelector("a").click();
-        });
-    });
-});
+// this function gets called when the user clicks on the button
+function buttonClicked() {
+    // increment number of clicks
+    numButtonClicks = numButtonClicks + 1;    
+    // update text div in HTML file
+    mainDiv.textContent = "Button Clicked times: " + numButtonClicks;
+}

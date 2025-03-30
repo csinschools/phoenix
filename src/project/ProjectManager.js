@@ -2220,10 +2220,24 @@ define(function (require, exports, module) {
         });
 
         // Add support for moving items to root directory
-        $projectTreeContainer.on("drop", function(e) {
-            var data = JSON.parse(e.originalEvent.dataTransfer.getData("text"));
-            actionCreator.moveItem(data.path, getProjectRoot().fullPath);
-            e.stopPropagation();
+        $projectTreeContainer.on("drop", async function(e) {
+            var textData = e.originalEvent.dataTransfer.getData("text");
+            if (textData !== null && textData.length > 0) {
+                var data = JSON.parse();
+                actionCreator.moveItem(data.path, getProjectRoot().fullPath);
+                e.stopPropagation();
+            } else {
+                // came from outside of the filetreeview (from the desktop)
+                let item = e.originalEvent.dataTransfer.items[0];
+                e.stopPropagation();
+                e.preventDefault();
+                if (item.kind === "file") {                    
+                    const fileHandle = await item.getAsFileSystemHandle();
+                    const file = await fileHandle.getFile();
+                    let path = getProjectRoot().fullPath + file.name;
+                    fs.writeFile(path, await file.arrayBuffer(), null, ()=>{});
+                }                
+            }
         });
 
         // When a context menu item is selected, we need to clear the context

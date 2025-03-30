@@ -302,7 +302,8 @@ define(function (require, exports, module) {
     }
 
     exports.init = function () {
-        _addToolbarIcon();
+        // disable adding the toolbar icon to sync/publish site
+        //_addToolbarIcon();
         _setupUserContext();
         ProjectManager.on(ProjectManager.EVENT_PROJECT_OPEN, _projectOpened);
         ProjectManager.on(ProjectManager.EVENT_PROJECT_FILE_CHANGED, _projectFileChanged);

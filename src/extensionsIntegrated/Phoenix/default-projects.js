@@ -35,6 +35,36 @@ define(function (require, exports, module) {
                 return;
             }
         }
+
+        let projectPath = ProjectManager.getWelcomeProjectPath();
+        // delete any existing project at the path
+        Phoenix.fs.unlink(projectPath, async function (err) {
+            Phoenix.fs.mkdir(projectPath, async function (err, stat) {
+                if (err) {
+                    throw (err);
+                } else {
+                    await ZipUtils.unzipURLToLocation('assets/default-project/en.zip', projectPath);
+                    const indexHtmlPath = `${projectPath}index.html`;
+                    fs.readFile(indexHtmlPath, 'utf8', function (err, text) {
+                        if(err || !text){
+                            return;
+                        }
+                        if(!text.includes("CLICK_HERE")){
+                            console.error("Default project index.html doesnt have CLICK_HERE!!!");
+                            return;
+                        }
+                        const newText = text.replace("CLICK_HERE", Strings.DEFAULT_PROJECT_HTML_CLICK_HERE);
+                        fs.writeFile(indexHtmlPath, newText, 'utf8', (writErr)=>{
+                            if(writErr){
+                                console.error("Error translating default project index.html", writErr);
+                            }
+                        });
+                    });                                    
+                }
+            });
+        });        
+        
+        /*
         await ZipUtils.unzipURLToLocation('assets/default-project/en.zip', ProjectManager.getWelcomeProjectPath());
         const indexHtmlPath = `${ProjectManager.getWelcomeProjectPath()}index.html`;
         fs.readFile(indexHtmlPath, 'utf8', function (err, text) {
@@ -52,6 +82,7 @@ define(function (require, exports, module) {
                 }
             });
         });
+        */
     }
 
     /**

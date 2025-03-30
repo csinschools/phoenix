@@ -219,7 +219,8 @@ function initCodeEditor() {
     */
     document.getElementById("defaultProjectButton").onclick = function() {
         Metrics.countEvent(Metrics.EVENT_TYPE.NEW_PROJECT, "main.Click", "default-project");
-        newProjectExtension.setupStartupProject()
+        // TODO: force new default project click to clear out existing changes to the default project and reload clean
+        newProjectExtension.setupStartupProject(true)
             .then(()=>{
                 openProject(newProjectExtension.getWelcomeProjectPath());
             }).catch(console.error);

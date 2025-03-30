@@ -568,6 +568,18 @@ define(function (require, exports, module) {
         }
     }
 
+    // find the index.html and try to open that
+    function _openIndexHTML() {
+        const indexPath = `${ProjectManager.getProjectRoot().fullPath}index.html`;
+        const fileEntry = FileSystem.getFileForPath(indexPath);
+        fileEntry.exists(function (err, exists) {
+            if (!err && exists) {
+                _setPanelVisibility(true);
+                CommandManager.execute(Commands.CMD_ADD_TO_WORKINGSET_AND_OPEN, {fullPath: indexPath});
+            }
+        });        
+    }
+
     function _openReadmeMDIfFirstTime() {
         if(!_isProjectReadmePreviewdOnce() && !Phoenix.isTestWindow){
             const readmePath = `${ProjectManager.getProjectRoot().fullPath}README.md`;
@@ -577,8 +589,12 @@ define(function (require, exports, module) {
                     _setPanelVisibility(true);
                     CommandManager.execute(Commands.CMD_ADD_TO_WORKINGSET_AND_OPEN, {fullPath: readmePath});
                     _setProjectReadmePreviewdOnce();
+                } else {
+                    _openIndexHTML();
                 }
             });
+        } else {
+            _openIndexHTML();
         }
     }
 

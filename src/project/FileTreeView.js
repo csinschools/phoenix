@@ -241,12 +241,17 @@ define(function (require, exports, module) {
             this.setDragImage(e);
             e.stopPropagation();
         },
+        // dropped onto a folder 
         handleDrop: async function(e) {
             var data = e.dataTransfer.getData("text");
+            this.setDraggedOver(false);
+            this.clearDragTimeout();     
+            e.preventDefault();       
+            e.stopPropagation();
 
             if (data.length === 0) {
                 // came from outside of the filetreeview (from the desktop)
-                let item = event.dataTransfer.items[0];
+                let item = e.dataTransfer.items[0];
                 if (item.kind === "file") {                    
                     const fileHandle = await item.getAsFileSystemHandle();
                     const file = await fileHandle.getFile();
@@ -258,10 +263,8 @@ define(function (require, exports, module) {
                 this.props.actions.moveItem(data.path, this.myPath());
             }
 
-            this.setDraggedOver(false);
 
-            this.clearDragTimeout();
-            e.stopPropagation();
+            
         },
 
         handleDragEnd: function(e) {
@@ -1204,13 +1207,15 @@ define(function (require, exports, module) {
                 this.props.extensions !== nextProps.extensions ||
                 this.props.selectionViewInfo !== nextProps.selectionViewInfo;
         },
-
+        // dropped onto the root folder
         handleDrop: async function(e) {
             var data = e.dataTransfer.getData("text");
             
             if (data.length === 0) {
                 // came from outside of the filetreeview (from the desktop)
-                let item = event.dataTransfer.items[0];
+                let item = e.dataTransfer.items[0];
+                e.preventDefault();
+                e.stopPropagation();
                 if (item.kind === "file") {                    
                     const fileHandle = await item.getAsFileSystemHandle();
                     const file = await fileHandle.getFile();
@@ -1220,8 +1225,9 @@ define(function (require, exports, module) {
             } else {
                 data = JSON.parse(data);
                 this.props.actions.moveItem(data.path, this.props.parentPath);
+                e.stopPropagation();
             }            
-            e.stopPropagation();
+            
         },
 
         /**

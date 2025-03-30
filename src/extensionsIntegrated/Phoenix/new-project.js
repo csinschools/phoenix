@@ -203,10 +203,20 @@ define(function (require, exports, module) {
         // this is needed as for fs access APIs in native folders, the browser will ask an additional write permission
         // to the user. We have to validate that before proceeding.
         // We do this by writing a file `.phcode.json` to the folder
+
+        // TODO: shouldn't we delete this file once done?
         return new Promise((resolve, reject)=>{
             let file = FileSystem.getFileForPath(`${path}/.phcode.json`);
             FileUtils.writeText(file, "{}", true)
-                .done(resolve)
+                .then(function() {
+                    try {
+                        file.unlink();
+                        resolve();
+                    }
+                    catch(err) {
+                        reject(err);
+                    }
+                })
                 .fail(reject);
         });
     }

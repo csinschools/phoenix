@@ -115,7 +115,8 @@ define(function (require, exports, module) {
             return;
         }
 
-        _addToolbarIcon();
+        // disable adding the toolbar icon to open up discussion forum
+        //_addToolbarIcon();
         serverSync.init();
         defaultProjects.init();
 

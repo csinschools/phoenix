@@ -158,7 +158,7 @@ define(function (require, exports, module) {
     // these are files that should be treated separately in metrics for open files.
     const DEFAULT_PROJECT_FILES = {
         "index.html": true,
-        "Newly_added_features.md": true,
+        //"Newly_added_features.md": true,
         "styles.css": true,
         "script.js": true
     };
