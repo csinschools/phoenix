@@ -80,7 +80,8 @@ define(function (require, exports, module) {
 
     exports.init = function () {
         if(!Phoenix.firstBoot && !window.testEnvironment){
-            _showNewUpdatesIfPresent();
+            // Do not show updates please!!
+            //_showNewUpdatesIfPresent();
         }
     };
 });
