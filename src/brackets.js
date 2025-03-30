@@ -433,6 +433,10 @@ define(function (require, exports, module) {
         } else {
             _openStartupProject(extensionLoaderPromise);
         }
+
+        // force opening the sidebar
+        CommandManager.execute(Commands.SHOW_SIDEBAR);
+        
     }
 
     function _setProjectReadmePreviewdOnce(value = true) {
