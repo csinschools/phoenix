@@ -1465,8 +1465,13 @@ define(function (require, exports, module) {
                                     } else {
                                         ZipUtils.unzipBinDataToLocation(data, projectPath)
                                         .then(()=>{
-                                            openProject(projectPath)
-                                                .then(resolve)
+                                              openProject(projectPath)
+                                                .then(function() {
+
+                                                    // if loading from the cloud, start with all files closed
+                                                    MainViewManager._closeAll(MainViewManager.ALL_PANES);
+                                                    resolve();
+                                                })
                                                 .fail(reject);
                                             console.log("Project Setup complete: ", projectPath);
                                         })

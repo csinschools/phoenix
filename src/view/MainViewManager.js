@@ -1541,35 +1541,40 @@ define(function (require, exports, module) {
             promises = [],
             state = PreferencesManager.getViewState(PREFS_NAME, PreferencesManager.STATE_PROJECT_CONTEXT);
 
-        function convertViewState() {
-            let files = PreferencesManager.getViewState(OLD_PREFS_NAME, PreferencesManager.STATE_PROJECT_CONTEXT);
+        // don't restore view state if the project was opened from the cloud
+        if (PhStore.getItem('projectFromCloud')) {
+            state = null;
+        } else {
+            function convertViewState() {
+                let files = PreferencesManager.getViewState(OLD_PREFS_NAME, PreferencesManager.STATE_PROJECT_CONTEXT);
 
-            if (!files) {
-                // nothing to convert
-                return;
+                if (!files) {
+                    // nothing to convert
+                    return;
+                }
+
+                var result = {
+                    orientation: null,
+                    activePaneId: FIRST_PANE,
+                    panes: {
+                        "first-pane": []
+                    }
+                };
+
+                // Add all files to the working set without verifying that
+                // they still exist on disk (for faster project switching)
+                files.forEach(function (value) {
+                    result.panes[FIRST_PANE].push(value);
+                });
+
+                return result;
             }
 
-            var result = {
-                orientation: null,
-                activePaneId: FIRST_PANE,
-                panes: {
-                    "first-pane": []
-                }
-            };
-
-            // Add all files to the working set without verifying that
-            // they still exist on disk (for faster project switching)
-            files.forEach(function (value) {
-                result.panes[FIRST_PANE].push(value);
-            });
-
-            return result;
-        }
-
-        if (!state) {
-            // not converted yet
-            state = convertViewState();
-        }
+            if (!state) {
+                // not converted yet
+                state = convertViewState();
+            }
+        }   
 
         // reset
         _mergePanes();
@@ -1854,4 +1859,5 @@ define(function (require, exports, module) {
     exports.FIRST_PANE = FIRST_PANE;
     exports.SECOND_PANE = SECOND_PANE;
     exports.EVENT_CURRENT_FILE_CHANGE = EVENT_CURRENT_FILE_CHANGE;
+    exports.PREFS_NAME = PREFS_NAME;
 });

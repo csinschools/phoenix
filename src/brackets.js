@@ -96,8 +96,9 @@ define(function (require, exports, module) {
         DeprecationWarning  = require("utils/DeprecationWarning"),
         ViewCommandHandlers = require("view/ViewCommandHandlers"),
         NotificationUI      = require("widgets/NotificationUI"),
+        MainViewManager     = require("view/MainViewManager"),
         Metrics             = require("utils/Metrics");
-    require("view/MainViewManager");
+    //require("view/MainViewManager");
 
     window.EventManager = EventManager; // Main event intermediary between brackets and other web pages.
     /**
@@ -402,6 +403,13 @@ define(function (require, exports, module) {
                     cancelled = true;
                     return;
                 }
+                // TODO: strip off the ID url param so that the user doesn't mistakenly think it is live updated (it's just a snapshot)
+                // Remove the 'id' parameter
+                params.remove('id');
+
+                // Update the URL in the browser's history without reloading
+                const newUrl = window.location.pathname + (params.isEmpty() ? '' : '?' + params.toString());
+                window.history.replaceState({}, '', newUrl);
             });
 
             // bring the downloading dialog to the front, otherwise it will be hidden behind the loading overlay
@@ -409,6 +417,12 @@ define(function (require, exports, module) {
 
             // strip off any anchors
             let projectId = params.get("id").split("#")[0];
+
+            PhStore.setItem("projectFromCloud", true);
+
+            // TODO: close off all files in the working set and all panes, or else it will complain about the file not being found if opened from a previous project
+            //ProjectManager._actionCreator.setSelected(null);
+            CommandManager.execute(Commands.FILE_CLOSE_ALL, {PaneId: MainViewManager.ALL_PANES});
             
             ProjectManager.downloadAndOpenProject(`https://codestore-348206.ts.r.appspot.com/zip/get/?id=${projectId}`)
                 .then(function() {
@@ -422,6 +436,7 @@ define(function (require, exports, module) {
                     }
                 })
                 .catch(function() {
+                    PhStore.setItem("projectFromCloud", false);
                     Dialogs.cancelModalDialogIfOpen(DefaultDialogs.DIALOG_ID_PROCESSING);
                     Dialogs.showErrorDialog("Error loading project from server", "There was an error loading the project from the server!")
                     .done(()=>{
@@ -431,6 +446,7 @@ define(function (require, exports, module) {
                     $(`.${DefaultDialogs.DIALOG_ID_ERROR}`).css("z-index", "1000000");       
                 });
         } else {
+            PhStore.setItem("projectFromCloud", false);
             _openStartupProject(extensionLoaderPromise);
         }
 

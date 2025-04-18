@@ -41,7 +41,8 @@ define(function (require, exports, module) {
      */
     let loadedThemes = {};
 
-    const SYSTEM_DEFAULT_THEME = "system-default";
+    //const SYSTEM_DEFAULT_THEME = "system-default";
+    const SYSTEM_DEFAULT_THEME = "dark-theme";
 
     /**
      * Object with all default values that can be configure via the settings UI

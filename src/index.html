@@ -45,6 +45,16 @@
     <meta name="title" content="Code for Schools Web Editor" />
     <meta name="description" content="A text editor designed to make coding as intuitive and fun as playing a video game - specially crafted for students and teachers." />
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QE9R7FHTTH"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QE9R7FHTTH');
+    </script>
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://phcode.dev/" />
@@ -458,7 +468,7 @@
             function _requireDone() {
                 loadJS('verify-dependencies-loaded.js', null, document.body);
                 require.config({
-                    urlArgs: "v=0.0.1"
+                    urlArgs: "v=0.0.6"
                 });
             }
 
