@@ -260,6 +260,7 @@ define(function (require, exports, module) {
             ThemeSettings.DEFAULTS.lightTheme;
         // check if a dev theme is loaded via query string parameter. If so that will be the current theme.
         let devTheme = _getCurrentlyLoadedDevTheme();
+        let currentTheme = devTheme;
         if(devTheme){
             currentTheme = devTheme;
         } else if (!currentTheme) {

@@ -3722,3 +3722,100 @@ label input {
     75%, 100%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
 }
     
+/* dumping the dark-theme/main.less contents into here so that the editor defaults to a dark theme upon startup (before any themes are formally loaded) */
+@background: #1d1f21;
+@foreground: #ddd;
+@accent-property: #ddd;
+@accent-def: #b77fdb;
+@accent-variable: #E387C1; // global var
+@accent-variable-2: #b77fdb; // scoped var
+@accent-variable-3: #535353; // type
+@accent-string-2: #ffc641;
+@accent-meta: #B39C1D;
+@matching-bracket: #2e5c00;
+@matching-tags: #000;
+@matching-refs: #1D2951;
+
+/* Code Styling */
+
+.editor-text-fragment-matching-refs{
+    background-color: @matching-refs;
+}
+
+.cm-atom, .cm-string, .cm-hr {color: #d89333;}
+.cm-string-2, .cm-hr {color: @accent-string-2;}
+.cm-number, .cm-attribute, .cm-plus {color: #85a300;}
+.cm-def {color: @accent-def;}
+.cm-property {color: @accent-property;}
+.cm-variable {
+    color: @accent-variable;
+}
+.cm-variable-2 {color: @accent-variable-2;}
+.cm-variable-3 {color: @accent-variable-3;}
+.cm-operator, .cm-bracket {color: @foreground;}
+.cm-meta {color: @accent-meta;}
+.cm-comment {color: #767676;}
+.cm-minus {color: #dc322f;}
+.cm-header {color: #d85896;}
+.cm-link {color: #b77fdb; text-decoration: none;}
+.cm-rangeinfo {color: #6c71c4;}
+.cm-keyword, .cm-qualifier, .cm-builtin, .cm-tag, .cm-quote {color: #6c9ef8;}
+.cm-error {color: #dc322f;}
+
+/* Extra CSS */
+
+.CodeMirror-searching {
+    background-color: #d3cd69;
+    &.searching-current-match {
+        background-color: #f6a644;
+    }
+}
+
+.CodeMirror-matchingbracket {
+    /* Ensure visibility against gray inline editor background */
+    background-color: @matching-bracket;
+    color: @foreground !important;
+}
+
+.CodeMirror-matchingtag:not(.CodeMirror-searching) {
+    /* Ensure visibility against gray inline editor background */
+    background-color: @matching-tags;
+    --border-height: calc((var(--editor-line-height) *1em - 1em) / 2);
+    border-top: var(--border-height) solid @matching-tags;
+    border-bottom: var(--border-height) solid @matching-tags;
+}
+
+.CodeMirror-overwrite .CodeMirror-cursor {
+    border-left: none !important;
+    border-bottom: 1px solid #fff;
+}
+
+.CodeMirror-foldgutter-open:after {
+    color: #666;
+}
+.CodeMirror-foldgutter-folded:after {
+    color: #aaa;
+}
+
+.CodeMirror.over-gutter, .CodeMirror-activeline {
+    .CodeMirror-foldgutter-open:after {
+        color: #ddd;
+    }
+}
+
+.CodeMirror-foldmarker {
+    border-color: #000;
+    color: #ccc;
+    background-color: #444;
+}
+
+/* Non-editor styling */
+
+.image-view,
+.not-editor {
+    background-color: @background;
+}
+
+.view-pane .image-view {
+    color: @foreground;
+}
